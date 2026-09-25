@@ -46,3 +46,9 @@ class User(Base):
         foreign_keys="Incident.assigned_to",
         back_populates="assignee"
     )
+
+    password_hash: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False
+    )
+    

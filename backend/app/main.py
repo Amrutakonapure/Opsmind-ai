@@ -5,6 +5,7 @@ from app.routes.incidents import router as incidents_router
 from app.routes.users import router as users_router
 from app.routes.logs import router as logs_router
 from app.routes.comments import router as comments_router
+from app.routes.auth import router as auth_router
 
 app = FastAPI(
     title="OpsMind AI",
@@ -32,3 +33,4 @@ app.include_router(incidents_router)
 app.include_router(users_router)
 app.include_router(logs_router)
 app.include_router(comments_router)
+app.include_router(auth_router) 

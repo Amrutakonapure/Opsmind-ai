@@ -9,7 +9,6 @@ class IncidentCreate(BaseModel):
     severity: str = "MEDIUM"
     status: str = "OPEN"
     service_id: int
-    created_by: int
     assigned_to: int | None = None
 
 

@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app.core.dependencies import get_db
+from app.core.dependencies import get_db, get_current_user
 from app.models.log import Log
 from app.models.incident import Incident
 from app.models.service import Service
 from app.schemas.log import LogCreate, LogResponse
+from app.models.user import User
 
 
 router = APIRouter(
@@ -21,6 +22,7 @@ router = APIRouter(
 )
 def create_log(
     log_data: LogCreate,
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     service = (

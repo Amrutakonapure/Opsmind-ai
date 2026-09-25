@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app.core.dependencies import get_db
+from app.core.dependencies import get_db, get_current_user
 from app.models.comment import IncidentComment
 from app.models.incident import Incident
 from app.models.user import User
@@ -21,6 +21,7 @@ router = APIRouter(
 )
 def create_comment(
     comment_data: CommentCreate,
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     incident = (
@@ -35,21 +36,9 @@ def create_comment(
             detail="Incident not found"
         )
 
-    user = (
-        db.query(User)
-        .filter(User.id == comment_data.user_id)
-        .first()
-    )
-
-    if not user:
-        raise HTTPException(
-            status_code=404,
-            detail="User not found"
-        )
-
     comment = IncidentComment(
         incident_id=comment_data.incident_id,
-        user_id=comment_data.user_id,
+        user_id=current_user.id,
         comment=comment_data.comment
     )
 

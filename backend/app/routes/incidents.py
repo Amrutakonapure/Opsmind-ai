@@ -3,7 +3,7 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app.core.dependencies import get_db
+from app.core.dependencies import get_db, get_current_user
 from app.models.incident import Incident
 from app.models.service import Service
 from app.models.user import User
@@ -27,6 +27,7 @@ router = APIRouter(
 )
 def create_incident(
     incident_data: IncidentCreate,
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     service = (
@@ -41,17 +42,7 @@ def create_incident(
             detail="Service not found"
         )
 
-    user = (
-        db.query(User)
-        .filter(User.id == incident_data.created_by)
-        .first()
-    )
 
-    if not user:
-        raise HTTPException(
-            status_code=404,
-            detail="User not found"
-        )
 
     incident = Incident(
         title=incident_data.title,
@@ -59,7 +50,7 @@ def create_incident(
         severity=incident_data.severity,
         status=incident_data.status,
         service_id=incident_data.service_id,
-        created_by=incident_data.created_by,
+        created_by=current_user.id,
         assigned_to=incident_data.assigned_to,
     )
     return incident_service.create_incident(db, incident)
@@ -132,6 +123,7 @@ def get_incident(
 def update_incident(
     incident_id: int,
     incident_data: IncidentUpdate,
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     incident = incident_service.get_incident_by_id(

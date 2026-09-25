@@ -5,7 +5,6 @@ from pydantic import BaseModel, ConfigDict
 
 class CommentCreate(BaseModel):
     incident_id: int
-    user_id: int
     comment: str
 
 
