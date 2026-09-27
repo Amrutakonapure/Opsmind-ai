@@ -9,6 +9,11 @@ class ServiceCreate(BaseModel):
     status: str = "OPERATIONAL"
 
 
+class ServiceUpdate(BaseModel):
+    name: str | None = None
+    description: str | None = None
+    status: str | None = None
+
 class ServiceResponse(BaseModel):
     id: int
     name: str

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from app.core.dependencies import get_db, get_current_user
@@ -70,9 +70,61 @@ def create_log(
     response_model=list[LogResponse]
 )
 def get_logs(
+    level: str | None = Query(
+        default=None,
+        description="Filter logs by level"
+    ),
+    service_id: int | None = Query(
+        default=None,
+        description="Filter logs by service ID"
+    ),
+    incident_id: int | None = Query(
+        default=None,
+        description="Filter logs by incident ID"
+    ),
+    page: int = Query(
+        default=1,
+        ge=1,
+        description="Page number"
+    ),
+    limit: int = Query(
+        default=10,
+        ge=1,
+        le=100,
+        description="Number of logs per page"
+    ),
     db: Session = Depends(get_db)
 ):
-    return db.query(Log).all()
+    query = db.query(Log)
+
+    # Filter by log level
+    if level:
+        query = query.filter(
+            Log.level == level
+        )
+
+    # Filter by service
+    if service_id:
+        query = query.filter(
+            Log.service_id == service_id
+        )
+
+    # Filter by incident
+    if incident_id:
+        query = query.filter(
+            Log.incident_id == incident_id
+        )
+
+    # Pagination
+    offset = (page - 1) * limit
+
+    return (
+        query
+        .order_by(Log.created_at.desc())
+        .offset(offset)
+        .limit(limit)
+        .all()
+    )
 
 
 @router.get(
@@ -98,5 +150,26 @@ def get_incident_logs(
     return (
         db.query(Log)
         .filter(Log.incident_id == incident_id)
+        .all()
+    )
+
+
+@router.get(
+    "/recent",
+    response_model=list[LogResponse]
+)
+def get_recent_logs(
+    limit: int = Query(
+        default=10,
+        ge=1,
+        le=100,
+        description="Number of recent logs to return"
+    ),
+    db: Session = Depends(get_db)
+):
+    return (
+        db.query(Log)
+        .order_by(Log.created_at.desc())
+        .limit(limit)
         .all()
     )

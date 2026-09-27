@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
 
-from jose import JWTError, jwt
-from passlib.context import CryptContext
+from jose import JWTError, jwt  # pyright: ignore[reportMissingModuleSource]
+from passlib.context import CryptContext  # pyright: ignore[reportMissingImports, reportMissingModuleSource]
 
 from app.core.database import settings
 
