@@ -5,6 +5,13 @@ from app.core.dependencies import get_db
 from app.models.service import Service
 from app.schemas.service import (ServiceCreate, ServiceUpdate, ServiceResponse)
 
+from app.models.incident import Incident
+from app.models.log import Log
+
+from app.schemas.incident_intelligence import (
+    ServiceHealthResponse,
+    IncidentDetailLog
+)
 
 router = APIRouter(
     prefix="/services",
@@ -155,3 +162,70 @@ def update_service(
     db.refresh(service)
 
     return service
+
+
+@router.get(
+    "/{service_id}/health",
+    response_model=ServiceHealthResponse
+)
+def get_service_health(
+    service_id: int,
+    db: Session = Depends(get_db)
+):
+    service = (
+        db.query(Service)
+        .filter(Service.id == service_id)
+        .first()
+    )
+
+    if not service:
+        raise HTTPException(
+            status_code=404,
+            detail="Service not found"
+        )
+
+    total_incidents = (
+        db.query(Incident)
+        .filter(
+            Incident.service_id == service_id
+        )
+        .count()
+    )
+
+    open_incidents = (
+        db.query(Incident)
+        .filter(
+            Incident.service_id == service_id,
+            Incident.status == "OPEN"
+        )
+        .count()
+    )
+
+    critical_incidents = (
+        db.query(Incident)
+        .filter(
+            Incident.service_id == service_id,
+            Incident.severity == "CRITICAL"
+        )
+        .count()
+    )
+
+    recent_logs = (
+        db.query(Log)
+        .filter(Log.service_id == service_id)
+        .order_by(Log.created_at.desc())
+        .limit(10)
+        .all()
+    )
+
+    return {
+        "service_id": service.id,
+        "service_name": service.name,
+        "service_status": service.status,
+
+        "total_incidents": total_incidents,
+        "open_incidents": open_incidents,
+        "critical_incidents": critical_incidents,
+
+        "recent_logs": recent_logs
+    }
