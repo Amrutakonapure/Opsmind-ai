@@ -13,6 +13,8 @@ from sqlalchemy.orm import (
     relationship
 )
 
+from pgvector.sqlalchemy import VECTOR
+
 from app.core.database import Base
 
 
@@ -37,6 +39,11 @@ class DocumentChunk(Base):
     content: Mapped[str] = mapped_column(
         Text,
         nullable=False
+    )
+
+    embedding: Mapped[list[float] | None] = mapped_column(
+        VECTOR(384),
+        nullable=True
     )
 
     created_at: Mapped[datetime] = mapped_column(

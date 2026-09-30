@@ -7,6 +7,8 @@ from app.routes.logs import router as logs_router
 from app.routes.comments import router as comments_router
 from app.routes.auth import router as auth_router
 from app.routes.documents import router as documents_router
+from app.routes.embeddings import router as embeddings_router
+
 
 app = FastAPI(
     title="OpsMind AI",
@@ -36,3 +38,4 @@ app.include_router(logs_router)
 app.include_router(comments_router)
 app.include_router(auth_router) 
 app.include_router(documents_router)
+app.include_router(embeddings_router)
