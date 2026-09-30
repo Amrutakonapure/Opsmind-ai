@@ -1,0 +1,21 @@
+Payment API Troubleshooting Runbook
+
+If the Payment API is experiencing high latency, first check the API logs.
+
+Check for:
+- Database connection timeout
+- High CPU usage
+- High memory usage
+- Slow database queries
+
+If database connection timeout occurs:
+1. Check PostgreSQL availability.
+2. Check database connection pool.
+3. Check recent database errors.
+
+If CPU usage is above 80 percent:
+1. Check running processes.
+2. Check recent deployments.
+3. Review application logs.
+
+If the issue continues, escalate the incident to the backend infrastructure team.
