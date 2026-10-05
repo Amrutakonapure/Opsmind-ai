@@ -7,6 +7,14 @@ class Settings(BaseSettings):
     database_url: str
     secret_key: str
     access_token_expire_minutes: int = 60
+
+    llm_provider: str = "groq"
+    groq_api_key: str
+    llm_model: str = "openai/gpt-oss-120b"
+
+    class Config:
+        env_file = ".env"
+
     class Config:
         env_file = ".env"
 

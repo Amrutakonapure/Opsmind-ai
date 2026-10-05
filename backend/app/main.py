@@ -9,6 +9,7 @@ from app.routes.auth import router as auth_router
 from app.routes.documents import router as documents_router
 from app.routes.embeddings import router as embeddings_router
 from app.routes.search import router as search_router
+from app.routes import rag
 
 
 app = FastAPI(
@@ -41,3 +42,4 @@ app.include_router(auth_router)
 app.include_router(documents_router)
 app.include_router(embeddings_router)
 app.include_router(search_router)
+app.include_router(rag.router)
