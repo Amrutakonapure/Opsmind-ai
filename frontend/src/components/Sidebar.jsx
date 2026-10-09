@@ -4,6 +4,8 @@ import {
   AlertTriangle,
   Server,
   Brain,
+  Sparkles,
+  BarChart3,
   LogOut,
 } from "lucide-react";
 
@@ -54,11 +56,31 @@ function Sidebar() {
         </NavLink>
 
         <NavLink
+          to="/analytics"
+          className={({ isActive }) =>
+            isActive ? "nav-item active" : "nav-item"
+          }
+        >
+          <BarChart3 size={20} />
+          <span>Analytics</span>
+        </NavLink>
+
+        <NavLink
           to="/ai-analysis"
           className="nav-item"
         >
           <Brain size={20} />
           <span>AI Analysis</span>
+        </NavLink>
+
+        <NavLink
+          to="/ai-assistant"
+          className={({ isActive }) =>
+          isActive ? "nav-item active" : "nav-item"
+          }
+        >
+          <Sparkles size={20} />
+          <span>AI Assistant</span>
         </NavLink>
 
       </nav>

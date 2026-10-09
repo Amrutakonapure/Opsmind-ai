@@ -6,6 +6,9 @@ import Incidents from "./pages/Incidents";
 import IncidentDetails from "./pages/IncidentDetails";
 import Services from "./pages/services";
 import AIAnalysis from "./pages/AIAnalysis";
+import AIAssistant from "./pages/AIAssistant";
+import Analytics from "./pages/analytics";
+
 
 function ProtectedRoute({ children }) {
   const token = localStorage.getItem("token");
@@ -67,6 +70,24 @@ function App() {
         <Route
           path="/"
           element={<Navigate to="/login" replace />}
+        />
+
+        <Route
+          path="/ai-assistant"
+          element={
+            <ProtectedRoute>
+              <AIAssistant />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/analytics"
+          element={
+            <ProtectedRoute>
+              <Analytics />
+            </ProtectedRoute>
+          }
         />
 
       </Routes>
