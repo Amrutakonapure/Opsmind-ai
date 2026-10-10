@@ -1,0 +1,39 @@
+services:
+
+  db:
+    image: pgvector/pgvector:pg18
+    container_name: opsmind-db
+    environment:
+      POSTGRES_DB: opsmind_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: opsmind_docker_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d opsmind_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: opsmind-backend
+    env_file:
+      - ./backend/.env
+    environment:
+      DATABASE_URL: postgresql+psycopg://postgres:opsmind_docker_password@db:5432/opsmind_db
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "alembic upgrade head &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8000"
+
+volumes:
+  postgres_data:
